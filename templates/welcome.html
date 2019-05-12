@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }}>
+  <title>Content-aggregator</title>
+
+</head>
+
+
+<body>
+
+  <br />
+
+  <center>
+    <div class="container col-md-7">
+      <div class="jumbotronUp-image">
+        <div class="jumbotron jumbotron-fluid">
+          <h1 class="display-4">Welcome</h1>
+          <p class="lead">The content aggregator will allow you to see news that interests you. <br />All you need is to register and select the topics and news portals you are interested in.</p><br />
+        </div>
+      </div>
+
+
+      <!-- News Start !-->
+
+      <section class="pb-5">
+        <div class="container">
+          <div class="row">
+
+            {% for news in data_articles %}
+
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+                <div class="mainflip">
+                  <div class="frontside">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image"></p>
+                        <h5 class="card-title">{{ news.title }}</h5>
+                        <p class="card-text">{{ news.publishedAt }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="backside">
+                    <div class="card">
+                      <div class="card-body text-center mt-4">
+                        <h5 class="card-title">{{ news.title }}</h5>
+                        <p class="card-text">{{ news.description }}</p>
+                        <a href="{{ news.url }}" class="btn btn-outline-success">Source</a>
+                        </a>
+                        </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {% endfor %}
+
+          </div>
+        </div>
+      </section>
+
+      <!-- News End !-->
+
+
+      <div class="jumbotron jumbotron-fluid">
+        <h1 class="display-4">Get started</h1>
+        <br />
+        <a class="btn btn-success btn-lg" href="#" role="button">Sign in</a>
+        <a class="btn btn-primary btn-lg" href="#" role="button">Sign up</a>
+      </div>
+    </div>
+  </center>
+
+  <style>
+    .jumbotronUp-image {
+
+      background-image: url("https://img.tsargrad.tv/cache/d/0/20180626_gaf_u39_945.jpg/w720h405fill.jpg");
+      background-size: cover;
+
+    }
+  </style>
+
+
+</body>
+
+</html>

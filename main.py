@@ -10,27 +10,23 @@ class Topic(Form):
 topicform = Topic()
 
 @app.route('/', methods=['GET', 'POST'])
-def define_page():
-    if request.method == 'POST':
-        userTopic = request.form['topicInput']
+def define_welcome():
 
-        url = ('https://newsapi.org/v2/everything?'
-                'q='+userTopic+'&'
-                'sources=lenta&'
-                'apiKey=397dc499222b4d158971b8cb46f1fa4b')
+    url = ('https://newsapi.org/v2/everything?'
+            'q=Barcelona&'
+            'sources=bbc-news&'
+            'apiKey=397dc499222b4d158971b8cb46f1fa4b')
 
-        try:
-            content = requests.get(url)
-        except requests.exceptions.ConnectionError:
-            err = 'You are not connected to the Internet'
-            return render_template('page.html', err=err)
+    try:
+        content = requests.get(url)
+    except requests.exceptions.ConnectionError:
+        err = 'You are not connected to the Internet'
+        return render_template('page.html', err=err)
 
-        data = content.json()
-        data_articles = data['articles']
+    data = content.json()
+    data_articles = data['articles']
 
-        return render_template('result.html', data_articles=data_articles)
-
-    return render_template('page.html', topicform=topicform)
+    return render_template('welcome.html', data_articles=data_articles)
 
 # title
 # description
