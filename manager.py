@@ -1,6 +1,4 @@
-from main import manager
-
-from main import *
+from configuration import manager
 
 if __name__ == '__main__':
     manager.run()

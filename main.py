@@ -1,32 +1,9 @@
-from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_security import SQLAlchemyUserDatastore
-from flask_migrate import Migrate, MigrateCommand
-from flask_script import Manager
+from flask import render_template, request
+
 from forms import regforms
 import requests
 
-
-app = Flask(__name__)
-
-SECRET_KEY = 'SECRETKEY'
-
-# mysql+driver://Name:Password@IP/DB name
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:microlabm666@localhost/aggregatordb'
-
-# Responsible for monitoring changes in the database before data is written
-# to it or after data is written
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-
-migrate = Migrate(app, db)
-
-manager = Manager(app)
-manager.add_command('dbcommand', MigrateCommand)
-
-from models import User, Role
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+from configuration import app, SECRET_KEY, db, user_datastore
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -52,7 +29,7 @@ def define_welcome():
 @app.route('/signup', methods=['GET', 'POST'])
 def define_register():
 
-    if request.methods == 'POST':
+    if request.method == 'POST':
         nameuser = request.form['nameform']
         emailuser = request.form['emailform']
         passworduser = request.form['passwordform']
