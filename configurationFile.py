@@ -1,4 +1,9 @@
-from main import app
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
+
+app = Flask(__name__)
+mail = Mail(app)
 
 
 class ConfigClass(object):
@@ -14,3 +19,6 @@ class ConfigClass(object):
     # Responsible for monitoring changes in the database before data is written
     # to it or after data is written
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+db = SQLAlchemy(app)

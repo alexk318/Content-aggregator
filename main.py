@@ -1,23 +1,14 @@
-from flask import Flask, render_template, request
-from flask_mail import Mail, Message
-from flask_sqlalchemy import SQLAlchemy
+from flask import render_template, request
+from flask_mail import Message
+
 from flask_security import SQLAlchemyUserDatastore
 
 from forms import regforms
+from configurationFile import app, db, mail, ConfigClass
 from models import User, Role
-from configurationFile import ConfigClass
 import requests
 
-app = Flask(__name__)
-
 app.config.from_object(ConfigClass)
-
-db = SQLAlchemy(app)
-
-# python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
-mail = Mail(app)
-
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -33,6 +24,7 @@ def define_welcome():
     return render_template('welcome.html', data_articles=data_articles)
 
 
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 @app.route('/signup', methods=['GET', 'POST'])
 def define_register():
 
@@ -41,6 +33,7 @@ def define_register():
         emailuser = request.form['emailform']
         passworduser = request.form['passwordform']
 
+        # python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
         msg = Message('Content aggregator. Confirm email', sender='Admin', recipients=[emailuser])
         msg.body = 'Hello,' + nameuser + '!'
         msg.html = 'There should be a link!'
