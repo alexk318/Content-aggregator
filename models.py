@@ -1,4 +1,4 @@
-from configuration import db
+from main import db
 from flask_security import UserMixin, RoleMixin
 
 user_role_link = db.Table('user_role',

@@ -1,17 +1,31 @@
-from flask import render_template, request
+from flask import Flask, render_template, request
+from flask_mail import Mail, Message
+from flask_sqlalchemy import SQLAlchemy
+from flask_security import SQLAlchemyUserDatastore
 
 from forms import regforms
 import requests
 
-from configuration import app, SECRET_KEY, db, user_datastore
+app = Flask(__name__)
 
+from configurationFile import ConfigClass
+
+app.config.from_object(ConfigClass)
+
+db = SQLAlchemy(app)
+
+# python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
+mail = Mail(app)
+
+
+from models import User, Role
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 @app.route('/', methods=['GET', 'POST'])
 def define_welcome():
 
-    url = ('https://newsapi.org/v2/everything?'
-            'q=Football&'
-            'sources=bbc-news&'
+    url = ('https://newsapi.org/v2/top-headlines?'
+            'q=game of thrones&'
             'apiKey=397dc499222b4d158971b8cb46f1fa4b')
 
     try:
@@ -34,10 +48,16 @@ def define_register():
         emailuser = request.form['emailform']
         passworduser = request.form['passwordform']
 
-        new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser)
+        msg = Message('Content aggregator. Confirm email', sender='Admin', recipients=[emailuser])
+        msg.body = 'Hello,' + nameuser + '!'
+        msg.html = 'There should be a link!'
 
-        db.session.add(new_user)
-        db.session.commit()
+        mail.send(msg)
+
+        #new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser)
+
+        #db.session.add(new_user)
+        #db.session.commit()
 
     return render_template('register.html', regforms=regforms)
 
@@ -46,4 +66,5 @@ def define_register():
 def define_login():
      pass
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run()
