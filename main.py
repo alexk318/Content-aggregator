@@ -45,7 +45,7 @@ def define_register():
         # db.session.add(new_user)
         # db.session.commit()
 
-    return render_template('register.html', regforms=regforms)
+    return render_template('signup.html', regforms=regforms)
 
 
 @app.route('/signin', methods=['GET', 'POST'])
