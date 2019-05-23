@@ -6,9 +6,12 @@ from flask_security import SQLAlchemyUserDatastore
 from forms import regforms
 from configurationFile import app, db, mail, ConfigClass
 from models import User, Role
+from itsdangerous import URLSafeTimedSerializer
 import requests
 
 app.config.from_object(ConfigClass)
+
+s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 
 @app.route('/', methods=['GET', 'POST'])
