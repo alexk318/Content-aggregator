@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, url_for
 from flask_mail import Message
 
 from flask_security import SQLAlchemyUserDatastore
@@ -15,7 +15,7 @@ s = URLSafeTimedSerializer('SECRETKEY')
 
 
 @app.route('/', methods=['GET', 'POST'])
-def define_welcome():
+def index():
 
     url = 'https://newsapi.org/v2/top-headlines?q=game of thrones&apiKey=397dc499222b4d158971b8cb46f1fa4b'
 
@@ -38,12 +38,13 @@ def define_register():
 
         token = s.dumps(emailuser, salt='email-confirm')
 
-        # python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
-        #msg = Message('Content aggregator. Confirm email', sender='Admin', recipients=[emailuser])
-        #msg.body = 'Hello,' + nameuser + '!'
-        #msg.html = 'There should be a link!'
+        confirmation_link = url_for('define_confirm', token=token, _external=True)
 
-        #mail.send(msg)
+        #  python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
+        msg = Message('Content aggregator. Confirm email', sender='alex20.x@gmail.com', recipients=[emailuser])
+        msg.body = 'Hello,' + nameuser + '! Your confirmation link = {}'.format(confirmation_link)
+
+        mail.send(msg)
 
         return 'Email: {}. Token: {}'.format(emailuser, token)
 
