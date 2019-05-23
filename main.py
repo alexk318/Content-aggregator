@@ -16,7 +16,6 @@ s = URLSafeTimedSerializer('SECRETKEY')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-
     url = 'https://newsapi.org/v2/top-headlines?q=game of thrones&apiKey=397dc499222b4d158971b8cb46f1fa4b'
 
     content = requests.get(url)
@@ -28,9 +27,10 @@ def index():
 
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+
+
 @app.route('/signup', methods=['GET', 'POST'])
 def define_register():
-
     if request.method == 'POST':
         nameuser = request.form['nameform']
         emailuser = request.form['emailform']
@@ -41,12 +41,14 @@ def define_register():
         confirmation_link = url_for('define_confirm', token=token, _external=True)
 
         #  python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
-        msg = Message('Content aggregator. Confirm email', sender='alex20.x@gmail.com', recipients=[emailuser])
-        msg.body = 'Hello,' + nameuser + '! Your confirmation link = {}'.format(confirmation_link)
+        msg = Message('Content aggregator. Account Verification', sender='Alexander Karpenko', recipients=[emailuser])
+        msg.body = 'Hello, ' + nameuser + '' \
+                                          '<br>Your confirmation link: {}' \
+                                          '<br><i>You have 1 hour to confirm your account</i>'.format(confirmation_link)
 
         mail.send(msg)
 
-        return 'Email: {}. Token: {}'.format(emailuser, token)
+        return render_template('emailsent.html', emailuser=emailuser)
 
     return render_template('signup.html', regforms=regforms)
 
@@ -54,15 +56,15 @@ def define_register():
 @app.route('/confirm/<token>')
 def define_confirm(token):
     try:
-        email = s.loads(token, salt='email-confirm', max_age=60)
+        email = s.loads(token, salt='email-confirm', max_age=3600)
     except SignatureExpired:
         return 'Token - False'
     return 'Token - True'
 
-        # new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser)
+    # new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser)
 
-        # db.session.add(new_user)
-        # db.session.commit()
+    # db.session.add(new_user)
+    # db.session.commit()
 
 
 @app.route('/signin', methods=['GET', 'POST'])
