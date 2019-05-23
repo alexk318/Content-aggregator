@@ -20,5 +20,12 @@ class ConfigClass(object):
     # to it or after data is written
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    MAIL_SERVER = 'yourmailserver'
+    MAIL_USERNAME = 'yourmailusername'
+    MAIL_PASSWORD = 'yourmailpassword'
+    MAIL_PORT = 465
+    MAIL_USER_SSL = True
+    MAIL_USER_TLS = False
+
 
 db = SQLAlchemy(app)
