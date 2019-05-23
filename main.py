@@ -6,12 +6,12 @@ from flask_security import SQLAlchemyUserDatastore
 from forms import regforms
 from configurationFile import app, db, mail, ConfigClass
 from models import User, Role
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 import requests
 
 app.config.from_object(ConfigClass)
 
-s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+s = URLSafeTimedSerializer('SECRETKEY')
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -36,19 +36,32 @@ def define_register():
         emailuser = request.form['emailform']
         passworduser = request.form['passwordform']
 
-        # python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
-        msg = Message('Content aggregator. Confirm email', sender='Admin', recipients=[emailuser])
-        msg.body = 'Hello,' + nameuser + '!'
-        msg.html = 'There should be a link!'
+        token = s.dumps(emailuser, salt='email-confirm')
 
-        mail.send(msg)
+        # python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
+        #msg = Message('Content aggregator. Confirm email', sender='Admin', recipients=[emailuser])
+        #msg.body = 'Hello,' + nameuser + '!'
+        #msg.html = 'There should be a link!'
+
+        #mail.send(msg)
+
+        return 'Email: {}. Token: {}'.format(emailuser, token)
+
+    return render_template('signup.html', regforms=regforms)
+
+
+@app.route('/confirm/<token>')
+def define_confirm(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=60)
+    except SignatureExpired:
+        return 'Token - False'
+    return 'Token - True'
 
         # new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser)
 
         # db.session.add(new_user)
         # db.session.commit()
-
-    return render_template('signup.html', regforms=regforms)
 
 
 @app.route('/signin', methods=['GET', 'POST'])
