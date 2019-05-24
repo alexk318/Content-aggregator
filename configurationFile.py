@@ -11,7 +11,9 @@ class ConfigClass(object):
 
     SECRET_KEY = 'SECRETKEY'
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:microlabm666@localhost/onlinestoredb'
+    SECURITY_PASSWORD_SALT = 'email-confirm'
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:microlabm666@localhost/aggregatordb'
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
