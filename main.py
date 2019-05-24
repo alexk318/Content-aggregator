@@ -6,12 +6,12 @@ from flask_security import SQLAlchemyUserDatastore
 from forms import regforms
 from configurationFile import app, db, mail, ConfigClass
 from models import User, Role
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from itsdangerous import URLSafeTimedSerializer
 import requests
 
 app.config.from_object(ConfigClass)
 
-s = URLSafeTimedSerializer('SECRETKEY')
+s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -27,8 +27,6 @@ def index():
 
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-
-
 @app.route('/signup', methods=['GET', 'POST'])
 def define_register():
     if request.method == 'POST':
@@ -38,13 +36,19 @@ def define_register():
 
         token = s.dumps(emailuser, salt='email-confirm')
 
+        new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser, token=token,
+                                              active=0)
+
+        db.session.add(new_user)
+        db.session.commit()
+
         confirmation_link = url_for('define_confirm', token=token, _external=True)
 
         #  python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
-        msg = Message('Content aggregator. Account Verification', sender='Alexander Karpenko', recipients=[emailuser])
-        msg.body = 'Hello, ' + nameuser + '' \
-                                          '<br>Your confirmation link: {}' \
-                                          '<br><i>You have 1 hour to confirm your account</i>'.format(confirmation_link)
+        msg = Message('Content aggregator. Account Verification', sender='alex20k.x@gmail.com', recipients=[emailuser])
+        msg.body = 'Hello, ' + nameuser + '.' \
+                                          'Your confirmation link: {}' \
+                                          ' .You have 1 hour to confirm your account'.format(confirmation_link)
 
         mail.send(msg)
 
@@ -55,16 +59,12 @@ def define_register():
 
 @app.route('/confirm/<token>')
 def define_confirm(token):
-    try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-    except SignatureExpired:
-        return 'Token - False'
-    return 'Token - True'
+    specific_user = User.query.filter(User.token == token).first()
+    specific_user.active = True
 
-    # new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser)
+    db.session.commit()
 
-    # db.session.add(new_user)
-    # db.session.commit()
+    return 'Account ' + '"' + specific_user.name + '"' + 'activated'
 
 
 @app.route('/signin', methods=['GET', 'POST'])
