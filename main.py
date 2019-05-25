@@ -15,15 +15,24 @@ login_manager = LoginManager(app)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def welcome_page():
-    url = 'https://newsapi.org/v2/top-headlines?q=game of thrones&apiKey=397dc499222b4d158971b8cb46f1fa4b'
-    content = requests.get(url)
-
-    data = content.json()
-    data_articles = data['articles']
+def index_page():
 
     if not current_user.is_authenticated:
+        url = 'https://newsapi.org/v2/top-headlines?q=steam&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+        content = requests.get(url)
+
+        data = content.json()
+        data_articles = data['articles']
+
         return render_template('welcome.html', data_articles=data_articles)
+
+    if current_user.is_authenticated:
+        url = 'https://newsapi.org/v2/top-headlines?q=space&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+        content = requests.get(url)
+
+        data = content.json()
+        data_articles = data['articles']
+        return render_template('result.html', data_articles=data_articles)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -66,11 +75,6 @@ def confirm_page(token):
     db.session.commit()
 
     return 'Account activated'
-
-
-@app.route('/signin', methods=['GET', 'POST'])
-def signin_page():
-    pass
 
 
 if __name__ == "__main__":
