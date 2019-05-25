@@ -26,7 +26,6 @@ def welcome_page():
         return render_template('welcome.html', data_articles=data_articles)
 
 
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 @app.route('/signup', methods=['GET', 'POST'])
 def signup_page():
     if request.method == 'POST':
@@ -37,6 +36,7 @@ def signup_page():
         s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
         token = s.dumps(emailuser, salt='email-confirm')
 
+        user_datastore = SQLAlchemyUserDatastore(db, User, Role)
         new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser, token=token,
                                               active=0)
 
