@@ -1,17 +1,21 @@
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, redirect
 from flask_mail import Message
 
-from flask_security import SQLAlchemyUserDatastore
 from flask_login import LoginManager, current_user
 
 from forms import regforms
 from configurationFile import app, db, mail, ConfigClass
 from models import User, Role
+from flask_security import Security, SQLAlchemyUserDatastore
+
 from itsdangerous import URLSafeTimedSerializer
 import requests
 
 app.config.from_object(ConfigClass)
 login_manager = LoginManager(app)
+
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -45,7 +49,6 @@ def signup_page():
         s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
         token = s.dumps(emailuser, salt='email-confirm')
 
-        user_datastore = SQLAlchemyUserDatastore(db, User, Role)
         new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser, token=token,
                                               active=0)
 
