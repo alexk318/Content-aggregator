@@ -2,89 +2,90 @@
 
 {% block head %}
 
-  <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }}>
+    <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }}>
 
 {% endblock %}
 
 
 {% block body %}
 
-  <br />
+    <br/>
 
-  <center>
-    <div class="container col-md-7">
-        <div class="jumbotron jumbotron-fluid">
-          <h1 class="display-4">Welcome</h1>
-          <p class="lead">The content aggregator will allow you to see news that interests you. <br />All you need is to register and select the topics and news portals you are interested in.</p><br />
+    <center>
+        <div class="container col-md-7">
+            <div class="jumbotron jumbotron-fluid">
+                <h1 class="display-4">Welcome</h1>
+                <p class="lead">The content aggregator will allow you to see news that interests you. <br/>All you need
+                    is to register and select the topics and news portals you are interested in.</p><br/>
 
 
-        </div>
-
-      <!-- News Start !-->
-
-        <div class="container">
-          <div class="row">
-
-            {% for news in data_articles %}
-
-            <div class="col-md-4">
-              <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-                <div class="mainflip">
-                  <div class="frontside">
-                    <div class="card">
-                      <div class="card-body text-center">
-                        <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image"></p>
-                        <h5 class="card-title">{{ news.title }}</h5>
-                        <p class="card-text">{{ news.publishedAt }}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="backside">
-                    <div class="card">
-                      <div class="card-body text-center mt-4">
-                        <h5 class="card-title">{{ news.title }}</h5>
-                        <p class="card-text">{{ news.description }}</p>
-                        <a href="{{ news.url }}" class="btn btn-outline-success">Source</a>
-                        </a>
-                        </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {% endfor %}
+            <!-- News Start !-->
 
-          </div>
+            <div class="container">
+                <div class="row">
+
+                    {% for news in data_articles %}
+
+                        <div class="col-md-4">
+                            <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+                                <div class="mainflip">
+                                    <div class="frontside">
+                                        <div class="card">
+                                            <div class="card-body text-center">
+                                                <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image">
+                                                </p>
+                                                <h5 class="card-title">{{ news.title }}</h5>
+                                                <p class="card-text">{{ news.publishedAt }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="backside">
+                                        <div class="card">
+                                            <div class="card-body text-center mt-4">
+                                                <h5 class="card-title">{{ news.title }}</h5>
+                                                <p class="card-text">{{ news.description }}</p>
+                                                <a href="{{ news.url }}" class="btn btn-outline-success">Source</a>
+                                                </a>
+                                                </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <!-- News End !-->
+
+
+            <div class="jumbotron jumbotron-fluid">
+                <h1 class="display-4">Get started</h1>
+                <br/>
+                <a class="btn btn-success btn-lg" href="{{ url_for('signin_page') }}" role="button">Sign in</a>
+                <a class="btn btn-primary btn-lg" href="{{ url_for('signup_page') }}" role="button">Sign up</a>
+            </div>
         </div>
+    </center>
 
-      <!-- News End !-->
+    <style>
 
-
-      <div class="jumbotron jumbotron-fluid">
-        <h1 class="display-4">Get started</h1>
-        <br />
-        <a class="btn btn-success btn-lg" href="{{ url_for('signin_page') }}" role="button">Sign in</a>
-        <a class="btn btn-primary btn-lg" href="{{ url_for('signup_page') }}" role="button">Sign up</a>
-      </div>
-    </div>
-  </center>
-
-  <style>
-
-  .container {
+        .container {
 
 
+        }
 
-  }
 
+        .container > div {
 
-.container > div {
+        }
 
-}
-
-  </style>
+    </style>
 
 {% endblock %}
