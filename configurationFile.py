@@ -5,23 +5,20 @@ from flask_mail import Mail
 app = Flask(__name__)
 
 
-class ConfigClass(object):
+SECRET_KEY = 'SECRETKEY'
 
-    DEBUG = True
+SECURITY_PASSWORD_SALT = 'email-confirm'
+SECURITY_PASSWORD_HASH = 'sha512_crypt'
 
-    SECRET_KEY = 'SECRETKEY'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:microlabm666@localhost/aggregatordb'
 
-    SECURITY_PASSWORD_SALT = 'email-confirm'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:microlabm666@localhost/aggregatordb'
-
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USE_SSL'] = True
-    app.config['MAIL_USERNAME'] = 'alex20k.x@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'jetP1102'
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 465
+MAIL_USE_SSL = True
+MAIL_USERNAME = 'alex20k.x@gmail.com'
+MAIL_PASSWORD = 'jetP1102'
 
 
 mail = Mail()
