@@ -37,7 +37,7 @@
                                                 <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image">
                                                 </p>
                                                 <h5 class="card-title">{{ news.title }}</h5>
-                                                <p class="card-text">{{ news.publishedAt }}</p>
+                                                <p class="card-text">{{ news.publishedAt[:10] }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -68,8 +68,8 @@
             <div class="jumbotron jumbotron-fluid">
                 <h1 class="display-4">Get started</h1>
                 <br/>
-                <a class="btn btn-success btn-lg" href="{{ url_for('signin_page') }}" role="button">Sign in</a>
-                <a class="btn btn-primary btn-lg" href="{{ url_for('signup_page') }}" role="button">Sign up</a>
+               <a class="btn btn-success btn-lg" href="/login" role="button">Sign in</a>
+                <a class="btn btn-primary btn-lg" href="{{ url_for('signup') }}" role="button">Sign up</a>
             </div>
         </div>
     </center>
