@@ -19,16 +19,16 @@ security = Security(app, user_datastore)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def index_page():
+def index():
 
     if not current_user.is_authenticated:
-        url = 'https://newsapi.org/v2/top-headlines?q=steam&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+        url = 'https://newsapi.org/v2/everything?q=Barcelona&apiKey=397dc499222b4d158971b8cb46f1fa4b'
         content = requests.get(url)
 
         data = content.json()
         data_articles = data['articles']
 
-        return render_template('welcome.html', data_articles=data_articles)
+        return render_template('welcome.html', data_articles=data_articles[:3])
 
     if current_user.is_authenticated:
         url = 'https://newsapi.org/v2/top-headlines?q=space&apiKey=397dc499222b4d158971b8cb46f1fa4b'
@@ -36,11 +36,12 @@ def index_page():
 
         data = content.json()
         data_articles = data['articles']
+
         return render_template('result.html', data_articles=data_articles)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
-def signup_page():
+def signup():
     if request.method == 'POST':
         nameuser = request.form['nameform']
         emailuser = request.form['emailform']
@@ -71,7 +72,7 @@ def signup_page():
 
 
 @app.route('/confirm/<token>')
-def confirm_page(token):
+def confirm(token):
     specific_user = User.query.filter(User.token == token).first()
     specific_user.active = True
 
