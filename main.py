@@ -4,14 +4,14 @@ from flask_mail import Message
 from flask_login import LoginManager, current_user
 
 from forms import regforms
-from configurationFile import app, db, mail, ConfigClass
+from configurationFile import app, db, mail
 from models import User, Role
 from flask_security import Security, SQLAlchemyUserDatastore
 
 from itsdangerous import URLSafeTimedSerializer
 import requests
 
-app.config.from_object(ConfigClass)
+app.config.from_pyfile('configurationFile.py')
 login_manager = LoginManager(app)
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -31,7 +31,7 @@ def index():
         return render_template('welcome.html', data_articles=data_articles[:3])
 
     if current_user.is_authenticated:
-        url = 'https://newsapi.org/v2/top-headlines?q=space&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+        url = 'https://newsapi.org/v2/everything?q=USA&apiKey=397dc499222b4d158971b8cb46f1fa4b'
         content = requests.get(url)
 
         data = content.json()
