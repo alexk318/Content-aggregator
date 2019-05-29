@@ -14,11 +14,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:microlabm66
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-MAIL_SERVER = 'smtp.gmail.com'
-MAIL_PORT = 465
-MAIL_USE_SSL = True
-MAIL_USERNAME = 'alex20k.x@gmail.com'
-MAIL_PASSWORD = 'jetP1102'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'alex20k.x@gmail.com'
+app.config['MAIL_PASSWORD'] = 'jetP1102'
 
 
 mail = Mail()
