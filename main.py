@@ -20,15 +20,41 @@ security = Security(app, user_datastore)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-
     if not current_user.is_authenticated:
-        url = 'https://newsapi.org/v2/everything?q=Barcelona&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+        url = 'https://newsapi.org/v2/top-headlines?country=ru&apiKey=397dc499222b4d158971b8cb46f1fa4b'
         content = requests.get(url)
 
         data = content.json()
         data_articles = data['articles']
 
-        return render_template('welcome.html', data_articles=data_articles[:3])
+        if request.method == 'POST':
+            nameuser = request.form['nameform']
+            emailuser = request.form['emailform']
+            passworduser = request.form['passwordform']
+
+            s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+            token = s.dumps(emailuser, salt='email-confirm')
+
+            new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser, token=token,
+                                                  active=0)
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            confirmation_link = url_for('confirm', token=token, _external=True)
+
+            #  python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
+            msg = Message('Content aggregator. Account Verification', sender='alex20k.x@gmail.com',
+                          recipients=[emailuser])
+            msg.body = 'Hello, ' + nameuser + '.' \
+                                              'Your confirmation link: {}' \
+                                              ' .You have 1 hour to confirm your account'.format(confirmation_link)
+
+            mail.send(msg)
+
+            return render_template('emailsent.html', emailuser=emailuser)
+
+        return render_template('welcome.html', data_articles=data_articles[:3], regforms=regforms)
 
     if current_user.is_authenticated:
         url = 'https://newsapi.org/v2/everything?q=USA&apiKey=397dc499222b4d158971b8cb46f1fa4b'
@@ -38,37 +64,6 @@ def index():
         data_articles = data['articles']
 
         return render_template('result.html', data_articles=data_articles)
-
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        nameuser = request.form['nameform']
-        emailuser = request.form['emailform']
-        passworduser = request.form['passwordform']
-
-        s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-        token = s.dumps(emailuser, salt='email-confirm')
-
-        new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser, token=token,
-                                              active=0)
-
-        db.session.add(new_user)
-        db.session.commit()
-
-        confirmation_link = url_for('confirm_page', token=token, _external=True)
-
-        #  python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
-        msg = Message('Content aggregator. Account Verification', sender='alex20k.x@gmail.com', recipients=[emailuser])
-        msg.body = 'Hello, ' + nameuser + '.' \
-                                          'Your confirmation link: {}' \
-                                          ' .You have 1 hour to confirm your account'.format(confirmation_link)
-
-        mail.send(msg)
-
-        return render_template('emailsent.html', emailuser=emailuser)
-
-    return render_template('signup.html', regforms=regforms)
 
 
 @app.route('/confirm/<token>')
