@@ -1,18 +1,21 @@
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for
 from flask_mail import Message
-
-from flask_login import LoginManager, current_user
-
-from forms import regforms
+from flask_login import LoginManager, current_user, login_user
+from forms import regforms, logforms
 from configurationFile import app, db, mail
 from models import User, Role
 from flask_security import Security, SQLAlchemyUserDatastore
-
 from itsdangerous import URLSafeTimedSerializer
 import requests
+from werkzeug.security import check_password_hash
+from werkzeug.exceptions import BadRequestKeyError
 
 app.config.from_pyfile('configurationFile.py')
-login_manager = LoginManager(app)
+
+login_manager = LoginManager()
+login_manager.login_view = 'index'
+login_manager.init_app(app)
+
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
@@ -28,33 +31,48 @@ def index():
         data_articles = data['articles']
 
         if request.method == 'POST':
-            nameuser = request.form['nameform']
-            emailuser = request.form['emailform']
-            passworduser = request.form['passwordform']
+            try:
+                # Authorization forms do not have a username form, werkzeug complains about it.
+                # This is how the interpreter determines if it is authorization or registration.
+                nameuser = request.form['nameform']
+            except BadRequestKeyError:
+                emailuser = request.form['emailform']
+                passworduser = request.form['passwordform']
+                rememberuser = request.form['checkbox']
 
-            s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-            token = s.dumps(emailuser, salt='email-confirm')
+                specific_user = User.query.filter_by(email=emailuser).first()
 
-            new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser, token=token,
-                                                  active=0)
+                if not specific_user:
+                    return render_template('welcome.html', data_articles=data_articles[:3], regforms=regforms,
+                                           logforms=logforms)
 
-            db.session.add(new_user)
-            db.session.commit()
+                login_user(specific_user, remember=rememberuser)
+            else:
+                emailuser = request.form['emailform']
+                passworduser = request.form['passwordform']
 
-            confirmation_link = url_for('confirm', token=token, _external=True)
+                s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+                token = s.dumps(emailuser, salt='email-confirm')
 
-            #  python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
-            msg = Message('Content aggregator. Account Verification', sender='alex20k.x@gmail.com',
-                          recipients=[emailuser])
-            msg.body = 'Hello, ' + nameuser + '.' \
-                                              'Your confirmation link: {}' \
-                                              ' .You have 1 hour to confirm your account'.format(confirmation_link)
+                new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser,
+                                                      token=token,
+                                                      active=0)
 
-            mail.send(msg)
+                db.session.add(new_user)
+                db.session.commit()
 
-            return render_template('emailsent.html', emailuser=emailuser)
+                confirmation_link = url_for('confirm', token=token, _external=True)
 
-        return render_template('welcome.html', data_articles=data_articles[:3], regforms=regforms)
+                #  python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
+                msg = Message('Content aggregator. Account Verification', sender='alex20k.x@gmail.com',
+                              recipients=[emailuser])
+                msg.body = 'Hello, ' + nameuser + '.' \
+                                                  'Your confirmation link: {}' \
+                                                  ' .You have 1 hour to confirm your account'.format(confirmation_link)
+
+                mail.send(msg)
+
+                return render_template('emailsent.html', emailuser=emailuser)
 
     if current_user.is_authenticated:
         url = 'https://newsapi.org/v2/everything?q=USA&apiKey=397dc499222b4d158971b8cb46f1fa4b'
@@ -64,6 +82,8 @@ def index():
         data_articles = data['articles']
 
         return render_template('result.html', data_articles=data_articles)
+
+    return render_template('welcome.html', data_articles=data_articles[:3], regforms=regforms, logforms=logforms)
 
 
 @app.route('/confirm/<token>')
