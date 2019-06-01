@@ -11,7 +11,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(10))
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(255))
-    active = db.Column(db.Boolean(), default=False)
+    active = db.Column(db.Boolean(), default=True)
     token = db.Column(db.String(70), unique=True)
     roles = db.relationship('Role', secondary=user_role_link, backref=db.backref('related_user', lazy='dynamic'))
 
