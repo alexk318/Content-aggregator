@@ -82,7 +82,7 @@ def index():
         data = content.json()
         data_articles = data['articles']
 
-        return render_template('result.html', data_articles=data_articles)
+        return render_template('news.html', data_articles=data_articles)
 
     return render_template('welcome.html', data_articles=data_articles[:3], regforms=regforms, logforms=logforms)
 
