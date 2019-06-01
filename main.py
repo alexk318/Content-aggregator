@@ -1,22 +1,25 @@
-from flask import render_template, request, url_for
+from flask import Flask, render_template, request, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 from flask_mail import Message
 from flask_login import LoginManager, current_user, login_user
 from forms import regforms, logforms
-from configurationFile import app, db, mail
-from models import User, Role
 from flask_security import Security, SQLAlchemyUserDatastore
 from itsdangerous import URLSafeTimedSerializer
 import requests
-from werkzeug.security import check_password_hash
 from werkzeug.exceptions import BadRequestKeyError
 
-app.config.from_pyfile('configurationFile.py')
+app = Flask(__name__)
+app.config.from_pyfile('config.cfg')
+
+mail = Mail(app)
+db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.login_view = 'index'
 login_manager.init_app(app)
 
-
+from models import User, Role
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
@@ -54,16 +57,8 @@ def index():
                 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
                 token = s.dumps(emailuser, salt='email-confirm')
 
-                new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser,
-                                                      token=token,
-                                                      active=0)
-
-                db.session.add(new_user)
-                db.session.commit()
-
                 confirmation_link = url_for('confirm', token=token, _external=True)
 
-                #  python -m smtpd -n -c DebuggingServer localhost:8025 - Emulated mail server
                 msg = Message('Content aggregator. Account Verification', sender='alex20k.x@gmail.com',
                               recipients=[emailuser])
                 msg.body = 'Hello, ' + nameuser + '.' \
@@ -71,6 +66,12 @@ def index():
                                                   ' .You have 1 hour to confirm your account'.format(confirmation_link)
 
                 mail.send(msg)
+
+                new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser,
+                                                      token=token)
+
+                db.session.add(new_user)
+                db.session.commit()
 
                 return render_template('emailsent.html', emailuser=emailuser)
 
