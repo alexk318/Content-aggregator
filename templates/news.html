@@ -4,64 +4,68 @@
 
 <head>
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }}>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }}>
 
-  <title>News-Api</title>
+    <title>News-Api</title>
 
 </head>
 
 
 <body>
 
-  <!-- News -->
 
-  <section class="pb-5">
+<!-- News -->
+
+<section class="pb-5">
     <div class="container">
-      <div class="row">
+        <div class="row">
 
-  {% for news in data_articles %}
+            {% for news in data_articles %}
 
-        <!-- Team member -->
-        <div class="col-xs-12 col-sm-6 col-md-4">
-          <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-            <div class="mainflip">
-              <div class="frontside">
-                <div class="card">
-                  <div class="card-body text-center">
-                    <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image"></p>
-                    <h5 class="card-title">{{ news.title }}</h5>
-                    <p class="card-text">{{ news.publishedAt }}</p>
-                  </div>
+                <!-- Team member -->
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+                        <div class="mainflip">
+                            <div class="frontside">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image"></p>
+                                        <h5 class="card-title">{{ news.title }}</h5>
+                                        <p class="card-text">{{ news.publishedAt[:10] }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="backside">
+                                <div class="card">
+                                    <div class="card-body text-center mt-4">
+                                        <h5 class="card-title">{{ news.title }}</h5>
+                                        <p class="card-text">{{ news.description }}</p>
+                                        <a href="{{ news.url }}" class="btn btn-outline-success">Source</a>
+                                        </a>
+                                        </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="backside">
-                <div class="card">
-                  <div class="card-body text-center mt-4">
-                    <h5 class="card-title">{{ news.title }}</h5>
-                    <p class="card-text">{{ news.description }}</p>
-                    <a href="{{ news.url }}" class="btn btn-outline-success">Source</a>
-                    </a>
-                    </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                <!-- ./Team member -->
+
+
+                <!-- News -->
+
+
+            {% endfor %}
+
+
         </div>
-        <!-- ./Team member -->
-
-
-  <!-- News -->
-
-  {% endfor %}
-
-</div>
-</div>
+    </div>
 </section>
 
 
