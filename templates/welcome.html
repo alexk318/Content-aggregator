@@ -37,7 +37,9 @@
                                                 <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image">
                                                 </p>
                                                 <h5 class="card-title">{{ news.title }}</h5>
-                                                <p class="card-text">{{ news.publishedAt[:10] }}</p>
+                                                <p class="card-text">{% set date = news.publishedAt[:10] %}
+                                                                        {% set parsed_date = datetime.strptime(date, '%Y-%m-%d') %}
+                                                                        {{ parsed_date.strftime('%A, %d %B %Y') }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -74,8 +76,9 @@
                         <div class="card-body">
                             <h3 class="text-center default-text py-3"><i class="fa fa-lock"></i> Login:</h3>
                             <!--Body-->
-
                             <form action="{{ url_for('index') }}" method="POST">
+
+
                                 {% for forms in logforms %}
 
                                     <br>
@@ -87,7 +90,6 @@
 
 
                                 <br>
-
                                 <button class="btn btn-success btn" type="submit">Sign in</button>
                             </form>
                         </div>
@@ -103,21 +105,53 @@
                             <h3 class="text-center white-text py-3"><i class="fa fa-user"></i> Register:</h3>
                             <!--Body-->
 
-                            <form action="{{ url_for('index') }}" method="POST">
-                                {% for forms in regforms %}
+                            {% if emailmsg %}
+
+                                <div class="alert alert-success" role="alert">
+                                    {{ emailmsg }}
+                                </div>
+
+                            {% endif %}
+
+                            <div class="container">
+                                <form action="{{ url_for('index') }}" method="POST">
+
+                                    {% if not emailmsg %}
+                                        {% for forms in regforms %}
+
+                                            <br>
+
+                                            {{ forms.label }}
+                                            <br>
+                                            {{ forms(class='form-control') }}
+
+
+                                        {% endfor %}
+
+                                        <input type="checkbox" name="rl"/>
+                                        <input type="checkbox" name="ba"/>
+
+                                    {% endif %}
+
+                                    {% if not emailmsg %}
+
+                                        {% for forms in phrforms %}
+                                            <br>
+                                            {{ forms.label }}
+                                            <br>
+                                            {{ forms(class='form-control') }}
+                                        {% endfor %}
+
+                                    {% endif %}
 
                                     <br>
-                                    {{ forms.label }}
-                                    <br>
-                                    {{ forms(class='form-control') }}
+                                    {% if not emailmsg %}
+                                        <button class="btn btn-primary btn" type="submit">I'm ready</button>
+                                    {% endif %}
+                                </form>
+                            </div>
 
-                                {% endfor %}
 
-                                <br>
-
-                                <button class="btn btn-primary btn" type="submit">I'm ready</button>
-
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -127,18 +161,5 @@
         <!-- Grid row -->
     </center>
 
-    <style>
-
-        .container {
-
-
-        }
-
-
-        .container > div {
-
-        }
-
-    </style>
 
 {% endblock %}
