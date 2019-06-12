@@ -1,13 +1,15 @@
-from flask import Flask, render_template, request, url_for
-from flask_sqlalchemy import SQLAlchemy
+import requests
+from flask import Flask, render_template, request, url_for, redirect, session
+from flask_login import LoginManager, current_user, login_user
 from flask_mail import Mail
 from flask_mail import Message
-from flask_login import LoginManager, current_user, login_user
-from forms import regforms, logforms
 from flask_security import Security, SQLAlchemyUserDatastore
+from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import URLSafeTimedSerializer
-import requests
 from werkzeug.exceptions import BadRequestKeyError
+from datetime import datetime
+
+from forms import regforms, logforms, phrforms
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
@@ -19,82 +21,98 @@ login_manager = LoginManager()
 login_manager.login_view = 'index'
 login_manager.init_app(app)
 
-from models import User, Role
+from models import User, Role, Theme
+
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if not current_user.is_authenticated:
-        url = 'https://newsapi.org/v2/top-headlines?country=ru&apiKey=397dc499222b4d158971b8cb46f1fa4b'
-        content = requests.get(url)
+    if request.method == 'GET':
+        if current_user.is_authenticated:
+            return render_template('news.html')
 
-        data = content.json()
-        data_articles = data['articles']
+        if not current_user.is_authenticated:
+            url = 'https://newsapi.org/v2/top-headlines?sources=ign&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+            content = requests.get(url)
 
-        if request.method == 'POST':
-            try:
-                # Authorization forms do not have a username form, werkzeug complains about it.
-                # This is how the interpreter determines if it is authorization or registration.
-                nameuser = request.form['nameform']
-            except BadRequestKeyError:
-                emailuser = request.form['emailform']
-                passworduser = request.form['passwordform']
-                rememberuser = request.form['checkbox']
+            data = content.json()
+            data_articles = data['articles']
 
-                specific_user = User.query.filter_by(email=emailuser).first()
+            return render_template('welcome.html', data_articles=data_articles[:3], regforms=regforms,
+                                   logforms=logforms, phrforms=phrforms, datetime=datetime)
 
-                if not specific_user:
-                    return render_template('welcome.html', data_articles=data_articles[:3], regforms=regforms,
-                                           logforms=logforms)
+    if request.method == 'POST':
+        try:
+            # Authorization forms do not have a username form, werkzeug complains about it.
+            # This is how the interpreter determines if it is authorization or registration.
+            nameuser = request.form['nameform']
+        except BadRequestKeyError:  # Authorization
+            emailuser = request.form['emailform']
+            passworduser = request.form['passwordform']
+            rememberuser = True if request.form['checkbox'] else False
 
-                login_user(specific_user, remember=rememberuser)
-            else:
-                emailuser = request.form['emailform']
-                passworduser = request.form['passwordform']
+            specific_user = User.query.filter_by(email=emailuser).first()
 
-                s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-                token = s.dumps(emailuser, salt='email-confirm')
+            if not specific_user:
+                return redirect('/')
 
-                confirmation_link = url_for('confirm', token=token, _external=True)
+            login_user(specific_user, remember=rememberuser)
+            return redirect('/')
 
-                msg = Message('Content aggregator. Account Verification', sender='alex20k.x@gmail.com',
-                              recipients=[emailuser])
-                msg.body = 'Hello, ' + nameuser + '.' \
-                                                  'Your confirmation link: {}' \
-                                                  ' .You have 1 hour to confirm your account'.format(confirmation_link)
+        else:  # Registration
+            emailuser = request.form['emailform']
+            passworduser = request.form['passwordform']
 
-                mail.send(msg)
+            r_phrase = request.form.get('rl')
+            b_phrase = request.form.get('ba')
 
-                new_user = user_datastore.create_user(name=nameuser, email=emailuser, password=passworduser,
-                                                      token=token)
+            s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+            token = s.dumps(emailuser, salt=app.config['SECURITY_PASSWORD_SALT'])
 
-                db.session.add(new_user)
-                db.session.commit()
+            session['nameuser'] = nameuser
+            session['emailuser'] = emailuser
+            session['passworduser'] = passworduser
+            session['r_phrase'] = r_phrase
+            session['b_phrase'] = b_phrase
+            # session['token'] = token
 
-                return render_template('emailsent.html', emailuser=emailuser)
+            confirmation_link = url_for('confirm', email=emailuser, _external=True)
 
-    if current_user.is_authenticated:
-        url = 'https://newsapi.org/v2/everything?q=USA&apiKey=397dc499222b4d158971b8cb46f1fa4b'
-        content = requests.get(url)
+            msg = Message('Content aggregator. Account Verification', sender='alex20k.x@gmail.com',
+                          recipients=[emailuser])
+            msg.body = 'Hello, ' + nameuser + '.' + 'Your confirmation link: {}'.format(confirmation_link)
 
-        data = content.json()
-        data_articles = data['articles']
+            mail.send(msg)
 
-        return render_template('news.html', data_articles=data_articles)
+            emailmsg = 'Account verification email has been sent to your e-mail address.'
 
-    return render_template('welcome.html', data_articles=data_articles[:3], regforms=regforms, logforms=logforms)
+            return render_template('welcome.html', emailmsg=emailmsg)
 
 
-@app.route('/confirm/<token>')
-def confirm(token):
-    specific_user = User.query.filter(User.token == token).first()
-    specific_user.active = True
+@app.route('/confirm/<email>')
+def confirm(email):
+    email == session.get('emailuser')
 
+    new_user = user_datastore.create_user(name=session.get('nameuser'), email=session.get('emailuser'),
+                                          password=session.get('passworduser'))
+
+    db.session.add(new_user)
     db.session.commit()
 
-    return 'Account activated'
+    curr_user = User.query.filter(User.email == session.get('emailuser')).first()
+
+    themes = {'Real Madrid': session.get('r_phrase'), 'Barcelona': session.get('b_phrase')}
+
+    for keys in themes:
+        if themes[keys] is True:
+            phrase = Theme.query.filter(Theme.themename == keys).first()
+            phrase.related_user.append(curr_user)
+            db.session.commit()
+
+    login_user(curr_user, remember=True)
+    return redirect('/')
 
 
 if __name__ == "__main__":
