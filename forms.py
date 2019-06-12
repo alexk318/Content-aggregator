@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, PasswordField, BooleanField
+from wtforms import Form, StringField, PasswordField
 
 
 class RegistrationForms(Form):
@@ -10,8 +10,12 @@ class RegistrationForms(Form):
 class LoginForms(Form):
     emailform = StringField('Email:')
     passwordform = PasswordField('Password:')
-    checkbox = BooleanField('Remember me:')
+
+
+class ThemesForms(Form):
+    pass
 
 
 regforms = RegistrationForms()
 logforms = LoginForms()
+theforms = ThemesForms()
