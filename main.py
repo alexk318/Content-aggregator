@@ -9,7 +9,7 @@ from itsdangerous import URLSafeTimedSerializer
 from werkzeug.exceptions import BadRequestKeyError
 from datetime import datetime
 
-from forms import regforms, logforms, phrforms
+from forms import regforms, logforms, theforms
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
@@ -34,14 +34,14 @@ def index():
             return render_template('news.html')
 
         if not current_user.is_authenticated:
-            url = 'https://newsapi.org/v2/top-headlines?sources=ign&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+            url = 'https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=397dc499222b4d158971b8cb46f1fa4b'
             content = requests.get(url)
 
             data = content.json()
             data_articles = data['articles']
 
             return render_template('welcome.html', data_articles=data_articles[:3], regforms=regforms,
-                                   logforms=logforms, phrforms=phrforms, datetime=datetime)
+                                   logforms=logforms, theforms=theforms, datetime=datetime)
 
     if request.method == 'POST':
         try:
