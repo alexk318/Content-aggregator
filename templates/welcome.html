@@ -17,7 +17,7 @@
             <div class="jumbotron jumbotron-fluid">
                 <h1 class="display-4">Welcome</h1>
                 <p class="lead">The content aggregator will allow you to see news that interests you. <br/>All you need
-                    is to register and select the topics and news portals you are interested in.</p><br/>
+                    is to register and select the themes you are interested in.</p><br/>
 
 
             </div>
@@ -39,8 +39,14 @@
                                                 </p>
                                                 <h5 class="card-title">{{ news.title }}</h5>
                                                 <p class="card-text">{% set date = news.publishedAt[:10] %}
-                                                                        {% set parsed_date = datetime.strptime(date, '%Y-%m-%d') %}
-                                                                        {{ parsed_date.strftime('%A, %d %B %Y') }}</p>
+                                                    {% set parsed_date = datetime.strptime(date, '%Y-%m-%d') %}
+                                                    {% set parsed_date = parsed_date.strftime('%A, %d %B %Y') %}
+                                                    {% set parsed_today = datetime.today().strftime('%A, %d %B %Y') %}
+                                                    {% if parsed_date == parsed_today %}
+                                                        Today
+                                                    {% else %}
+                                                        {{ parsed_today }}</p>
+                                                    {% endif %}
                                             </div>
                                         </div>
                                     </div>
@@ -50,9 +56,6 @@
                                                 <h5 class="card-title">{{ news.title }}</h5>
                                                 <p class="card-text">{{ news.description }}</p>
                                                 <a href="{{ news.url }}" class="btn btn-outline-success">Source</a>
-                                                </a>
-                                                </li>
-                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -128,9 +131,6 @@
 
 
                                         {% endfor %}
-
-                                        <input type="checkbox" name="rl"/>
-                                        <input type="checkbox" name="ba"/>
 
                                     {% endif %}
 
