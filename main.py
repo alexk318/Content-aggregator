@@ -65,9 +65,6 @@ def index():
             emailuser = request.form['emailform']
             passworduser = request.form['passwordform']
 
-            r_phrase = request.form.get('rl')
-            b_phrase = request.form.get('ba')
-
             s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
             token = s.dumps(emailuser, salt=app.config['SECURITY_PASSWORD_SALT'])
 
