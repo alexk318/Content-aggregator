@@ -3,7 +3,6 @@
 {% block head %}
 
     <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }}>
-    <link rel="icon" href="../static/favicon.ico">
 
 {% endblock %}
 
@@ -91,9 +90,9 @@
                                     {{ forms(class='form-control') }}
 
                                 {% endfor %}
-
-
                                 <br>
+
+                                <input type="checkbox" name="remember"> Remember me</p>
                                 <button class="btn btn-success btn" type="submit">Sign in</button>
                             </form>
                         </div>
