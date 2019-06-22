@@ -31,7 +31,11 @@ security = Security(app, user_datastore)
 def index():
     if request.method == 'GET':
         if current_user.is_authenticated:
-            return render_template('news.html')
+            blank_list = []
+            if current_user.searchphrases == blank_list:
+                return render_template('themes.html')
+            else:
+                return render_template('news.html')
 
         if not current_user.is_authenticated:
             url = 'https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=397dc499222b4d158971b8cb46f1fa4b'
@@ -51,7 +55,7 @@ def index():
         except BadRequestKeyError:  # Authorization
             emailuser = request.form['emailform']
             passworduser = request.form['passwordform']
-            rememberuser = True if request.form['checkbox'] else False
+            rememberuser = request.form.get('remember')
 
             specific_user = User.query.filter_by(email=emailuser).first()
 
@@ -71,9 +75,6 @@ def index():
             session['nameuser'] = nameuser
             session['emailuser'] = emailuser
             session['passworduser'] = passworduser
-            session['r_phrase'] = r_phrase
-            session['b_phrase'] = b_phrase
-            # session['token'] = token
 
             confirmation_link = url_for('confirm', email=emailuser, _external=True)
 
@@ -92,7 +93,7 @@ def index():
 def confirm(email):
     email == session.get('emailuser')
 
-    new_user = user_datastore.create_user(name=session.get('nameuser'), email=session.get('emailuser'),
+    new_user = user_datastore.create_user(username=session.get('nameuser'), email=session.get('emailuser'),
                                           password=session.get('passworduser'))
 
     db.session.add(new_user)
@@ -100,13 +101,13 @@ def confirm(email):
 
     curr_user = User.query.filter(User.email == session.get('emailuser')).first()
 
-    themes = {'Real Madrid': session.get('r_phrase'), 'Barcelona': session.get('b_phrase')}
+    # themes = {'Real Madrid': session.get('r_phrase'), 'Barcelona': session.get('b_phrase')}
 
-    for keys in themes:
-        if themes[keys] is True:
-            phrase = Theme.query.filter(Theme.themename == keys).first()
-            phrase.related_user.append(curr_user)
-            db.session.commit()
+    # for keys in themes:
+    # if themes[keys] is True:
+    # phrase = Theme.query.filter(Theme.themename == keys).first()
+    # phrase.related_user.append(curr_user)
+    # db.session.commit()
 
     login_user(curr_user, remember=True)
     return redirect('/')
