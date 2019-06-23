@@ -20,6 +20,9 @@ class User(db.Model, UserMixin):
     searchphrases = db.relationship('Theme', secondary=user_theme_link,
                                     backref=db.backref('related_user', lazy='dynamic'))
 
+    def __repr__(self):
+        return '<{}>'.format(self.username)
+
 
 class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
@@ -29,3 +32,6 @@ class Role(db.Model, RoleMixin):
 class Theme(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     themename = db.Column(db.String(100))
+
+    def __repr__(self):
+        return '<{}>'.format(self.themename)
