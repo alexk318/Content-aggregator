@@ -33,12 +33,26 @@ def index():
         if current_user.is_authenticated:
             blank_list = []
             if current_user.searchphrases == blank_list:
-                return render_template('themes.html')
+                return redirect(url_for('process_themes'))
             else:
-                return render_template('news.html')
+                userthemes = current_user.searchphrases
+                print(userthemes)
+
+                all_news = []
+
+                for themes in userthemes:
+                    print(themes)
+                    url = 'https://newsapi.org/v2/everything?q=' + themes.themename + '&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+                    content = requests.get(url)
+
+                    data = content.json()
+                    data_articles = data['articles']
+                    all_news.append(data_articles)
+
+                return render_template('news.html', all_news=all_news, data_articles=data_articles)
 
         if not current_user.is_authenticated:
-            url = 'https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+            url = 'https://newsapi.org/v2/everything?q=java&apiKey=397dc499222b4d158971b8cb46f1fa4b'
             content = requests.get(url)
 
             data = content.json()
@@ -89,6 +103,30 @@ def index():
             return render_template('welcome.html', emailmsg=emailmsg)
 
 
+@app.route('/process_themes', methods=['POST', 'GET'])
+def process_themes():
+    if request.method == 'GET':
+        return render_template('themes.html')
+    if request.method == 'POST':
+        themes = {'football': request.form.get('football'),
+                  'basketball': request.form.get('basketball'),
+                  'hockey': request.form.get('hockey'),
+                  'java': request.form.get('java'),
+                  'cplus': request.form.get('c++'),
+                  'php': request.form.get('php'),
+                  'usa': request.form.get('usa'),
+                  'russia': request.form.get('russia'),
+                  'india': request.form.get('india')}
+
+        for keys in themes:
+            if themes[keys] == 'on':
+                theme = Theme.query.filter(Theme.themename == keys).first()
+                theme.related_user.append(current_user)
+                db.session.commit()
+
+        return redirect('/')
+
+
 @app.route('/confirm/<email>')
 def confirm(email):
     email == session.get('emailuser')
@@ -100,14 +138,6 @@ def confirm(email):
     db.session.commit()
 
     curr_user = User.query.filter(User.email == session.get('emailuser')).first()
-
-    # themes = {'Real Madrid': session.get('r_phrase'), 'Barcelona': session.get('b_phrase')}
-
-    # for keys in themes:
-    # if themes[keys] is True:
-    # phrase = Theme.query.filter(Theme.themename == keys).first()
-    # phrase.related_user.append(curr_user)
-    # db.session.commit()
 
     login_user(curr_user, remember=True)
     return redirect('/')

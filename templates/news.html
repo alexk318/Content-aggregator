@@ -13,8 +13,11 @@
         <div class="container">
             <div class="row">
 
-                {% for news in data_articles %}
 
+
+                {% for data_articles in all_news %}
+                {% for news in data_articles %}
+<br>
                     <!-- Team member -->
                     <div class="col-xs-12 col-sm-6 col-md-4">
                         <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
@@ -22,7 +25,8 @@
                                 <div class="frontside">
                                     <div class="card">
                                         <div class="card-body text-center">
-                                            <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image"></p>
+                                            <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image">
+                                            </p>
                                             <h5 class="card-title">{{ news.title }}</h5>
                                             <p class="card-text">{{ news.publishedAt[:10] }}</p>
                                         </div>
@@ -50,6 +54,7 @@
 
 
                 {% endfor %}
+            {% endfor %}
 
 
             </div>
