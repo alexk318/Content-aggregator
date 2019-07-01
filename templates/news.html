@@ -7,54 +7,66 @@
 
 {% block body %}
 
-    <!-- News -->
+    <a class="btn btn-primary btn" href="/logout" role="button">Log out</a>
 
+    <a class="btn btn-success btn" href="/edit_themes" role="button">Edit themes</a>
+
+    <!-- News -->
+    <br>
     <section class="pb-5">
         <div class="container">
             <div class="row">
 
 
-
                 {% for data_articles in all_news %}
-                {% for news in data_articles %}
-<br>
-                    <!-- Team member -->
-                    <div class="col-xs-12 col-sm-6 col-md-4">
-                        <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-                            <div class="mainflip">
-                                <div class="frontside">
-                                    <div class="card">
-                                        <div class="card-body text-center">
-                                            <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image">
-                                            </p>
-                                            <h5 class="card-title">{{ news.title }}</h5>
-                                            <p class="card-text">{{ news.publishedAt[:10] }}</p>
+                    {% for news in data_articles %}
+
+                        <!-- Team member -->
+                        <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+                                <div class="mainflip">
+                                    <div class="frontside">
+                                        <div class="card">
+                                            <div class="card-body text-center">
+                                                <p><img class=" img-fluid" src="{{ news.urlToImage }}" alt="card image">
+                                                </p>
+                                                <h5 class="card-title">{{ news.title }}</h5>
+                                                <p class="card-text">{% set date = news.publishedAt[:10] %}
+                                                    {% set parsed_date = datetime.strptime(date, '%Y-%m-%d') %}
+                                                    {% set parsed_date = parsed_date.strftime('%A, %d %B %Y') %}
+                                                    {% set parsed_today = datetime.today().strftime('%A, %d %B %Y') %}
+                                                    {% if parsed_date == parsed_today %}
+                                                        Today
+                                                    {% else %}
+                                                        {{ parsed_today }}</p>
+                                                    {% endif %}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="backside">
-                                    <div class="card">
-                                        <div class="card-body text-center mt-4">
-                                            <h5 class="card-title">{{ news.title }}</h5>
-                                            <p class="card-text">{{ news.description }}</p>
-                                            <a href="{{ news.url }}" class="btn btn-outline-success">Source</a>
-                                            </a>
-                                            </li>
-                                            </ul>
+                                    <div class="backside">
+                                        <div class="card">
+                                            <div class="card-body text-center mt-4">
+                                                <h5 class="card-title">{{ news.title }}</h5>
+                                                <p class="card-text">{{ news.description }}</p>
+                                                <a href="{{ news.url }}" class="btn btn-outline-success">Source</a>
+                                                </a>
+                                                </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- ./Team member -->
+                        <!-- ./Team member -->
 
 
-                    <!-- News -->
+                        <!-- News -->
 
 
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
 
 
             </div>
