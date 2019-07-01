@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, url_for, redirect, session
 from flask_login import LoginManager, current_user, login_user
 from flask_mail import Mail
 from flask_mail import Message
-from flask_security import Security, SQLAlchemyUserDatastore
+from flask_security import Security, SQLAlchemyUserDatastore, login_required
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import URLSafeTimedSerializer
 from werkzeug.exceptions import BadRequestKeyError
@@ -34,22 +34,22 @@ def index():
             blank_list = []
             if current_user.searchphrases == blank_list:
                 return redirect(url_for('process_themes'))
+                return redirect(url_for('process_themes'))
             else:
                 userthemes = current_user.searchphrases
-                print(userthemes)
 
                 all_news = []
 
-                for themes in userthemes:
-                    print(themes)
-                    url = 'https://newsapi.org/v2/everything?q=' + themes.themename + '&apiKey=397dc499222b4d158971b8cb46f1fa4b'
+                for themes_ in userthemes:
+                    url = 'https://newsapi.org/v2/everything?q=' + themes_.themename + '&apiKey=397dc499222b4d158971b8cb46f1fa4b'
                     content = requests.get(url)
 
                     data = content.json()
                     data_articles = data['articles']
                     all_news.append(data_articles)
 
-                return render_template('news.html', all_news=all_news, data_articles=data_articles)
+                return render_template('news.html', all_news=all_news, data_articles=data_articles, datetime=datetime,
+                                       userthemes=userthemes)
 
         if not current_user.is_authenticated:
             url = 'https://newsapi.org/v2/everything?q=java&apiKey=397dc499222b4d158971b8cb46f1fa4b'
@@ -103,6 +103,7 @@ def index():
             return render_template('welcome.html', emailmsg=emailmsg)
 
 
+@login_required
 @app.route('/process_themes', methods=['POST', 'GET'])
 def process_themes():
     if request.method == 'GET':
@@ -123,6 +124,61 @@ def process_themes():
                 theme = Theme.query.filter(Theme.themename == keys).first()
                 theme.related_user.append(current_user)
                 db.session.commit()
+
+        return redirect('/')
+
+
+@login_required
+@app.route('/edit_themes', methods=['POST', 'GET'])
+def edit_themes():
+    if request.method == 'GET':
+
+        themes_names = []
+
+        for t in current_user.searchphrases:
+            themes_names.append(t.themename)
+
+        return render_template('edit_themes.html', themes=themes_names)
+    if request.method == 'POST':
+        themes = {'football': request.form.get('football'),
+                  'basketball': request.form.get('basketball'),
+                  'hockey': request.form.get('hockey'),
+                  'java': request.form.get('java'),
+                  'cplus': request.form.get('c++'),
+                  'php': request.form.get('php'),
+                  'usa': request.form.get('usa'),
+                  'russia': request.form.get('russia'),
+                  'india': request.form.get('india')}
+
+        print('football:', request.form.get('football'))
+        print('basketball:', request.form.get('basketball'))
+        print('hockey:', request.form.get('hockey'))
+
+        print('java:', request.form.get('java'))
+        print('c++:', request.form.get('c++'))
+        print('php:', request.form.get('php'))
+
+        user_themes = set()
+        for userthemes in current_user.searchphrases:
+            user_themes.add(userthemes.themename)
+
+        new_themes = set()
+        for keys in themes:
+            if themes[keys] == 'on':
+                if keys not in user_themes:
+                    new_themes.add(keys)
+
+        for newthemes in new_themes:
+            theme = Theme.query.filter(Theme.themename == newthemes).first()
+            theme.related_user.append(current_user)
+            db.session.commit()
+
+        for keys in themes:
+            if themes[keys] is None:  # Football, Basketball, Hockey
+                if keys in user_themes:
+                    theme = Theme.query.filter(Theme.themename == keys).first()
+                    theme.related_user.remove(current_user)
+                    db.session.commit()
 
         return redirect('/')
 
