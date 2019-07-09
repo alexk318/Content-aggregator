@@ -12,8 +12,8 @@ user_theme_link = db.Table('user_theme', db.Column('user_id', db.Integer(), db.F
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
-    username = db.Column(db.String(10))
-    email = db.Column(db.String(100), unique=True)
+    username = db.Column(db.String(255))
+    email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean(), default=True)
     roles = db.relationship('Role', secondary=user_role_link, backref=db.backref('related_user', lazy='dynamic'))
