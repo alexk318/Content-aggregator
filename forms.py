@@ -12,10 +12,5 @@ class LoginForms(Form):
     passwordform = PasswordField('Password:')
 
 
-class ThemesForms(Form):
-    pass
-
-
 regforms = RegistrationForms()
 logforms = LoginForms()
-theforms = ThemesForms()
