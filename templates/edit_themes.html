@@ -1,0 +1,268 @@
+{% extends 'prototype.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css">
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Edit topics</h1>
+            <p class="lead">
+                <br>
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                                    aria-expanded="true" aria-controls="collapseOne">
+                                Sport
+                                                            <form action="{{ url_for('edit_themes') }}" method="POST">
+                            </button>
+                            <input type="checkbox" id="sport" onclick="sport_func()">
+
+                        </h2>
+                    </div>
+
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                         data-parent="#accordionExample">
+                        <div class="card-body">
+
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                        <div class="card" style="width: 18rem;">
+                                            <img src="../static/football.jpg" class="card-img-top" alt="...">
+                                            <div class="card-body">
+
+                                                {% if 'football' not in themes %}
+                                                    <h5 class="card-title"><input type="checkbox" name="football" id="football">
+                                                {% else %}
+                                                    <h5 class="card-title">
+                                                    <input type="checkbox" name="football" id="football" checked>
+                                                {% endif %}
+
+                                                Football
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                        <div class="card" style="width: 18rem;">
+                                            <img src="../static/basketball.jpg" class="card-img-top" alt="...">
+                                            <div class="card-body">
+
+                                                {% if 'basketball' not in themes %}
+                                                    <h5 class="card-title"><input type="checkbox" name="basketball" id="basketball">
+                                                {% else %}
+                                                    <h5 class="card-title">
+                                                    <input type="checkbox" name="basketball" id="basketball" checked>
+                                                {% endif %}
+
+                                                Basketball
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                        <div class="card" style="width: 18rem;">
+                                            <img src="../static/hockey.jpg" class="card-img-top" alt="...">
+                                            <div class="card-body">
+
+                                                {% if 'hockey' not in themes %}
+                                                    <h5 class="card-title"><input type="checkbox" name="hockey" id="hockey">
+                                                {% else %}
+                                                    <h5 class="card-title"><input type="checkbox" name="hockey" id="hockey" checked>
+                                                {% endif %}
+
+                                                Hockey
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                        data-target="#collapseTwo" aria-expanded="false"
+                                        aria-controls="collapseTwo">
+                                    IT
+                                </button>
+                                <input type="checkbox" id="it" onclick="it_func()">
+                            </h2>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="../static/java.png" class="card-img-top" alt="...">
+                                                <div class="card-body">
+
+                                                    {% if 'java' not in themes %}
+                                                        <h5 class="card-title"><input type="checkbox" name="java" id="java">
+                                                    {% else %}
+                                                        <h5 class="card-title">
+                                                        <input type="checkbox" name="java" id="java" checked>
+                                                    {% endif %}
+
+                                                    Java
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="../static/c++.jpg" class="card-img-top" alt="...">
+                                                <div class="card-body">
+
+                                                    {% if 'cplus' not in themes %}
+                                                        <h5 class="card-title"><input type="checkbox" name="c++" id="cplus">
+                                                    {% else %}
+                                                        <h5 class="card-title">
+                                                        <input type="checkbox" name="c++" id="cplus" checked>
+                                                    {% endif %}
+
+                                                    C++
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="../static/php.png" class="card-img-top" alt="...">
+                                                <div class="card-body">
+
+                                                    {% if 'php' not in themes %}
+                                                        <h5 class="card-title"><input type="checkbox"
+                                                                                      name="php" id="php">
+                                                    {% else %}
+                                                        <h5 class="card-title"><input type="checkbox"
+                                                                                      name="php" id="php" checked>
+                                                    {% endif %}
+
+                                                    PHP
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingThree">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                        data-target="#collapseThree" aria-expanded="false"
+                                        aria-controls="collapseThree">
+                                    Countries
+                                </button>
+                                <input type="checkbox" id="countries" onclick="countries_func()">
+                            </h2>
+                        </div>
+                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="../static/usa.jpg" class="card-img-top" alt="...">
+                                                <div class="card-body">
+
+                                                    {% if 'usa' not in themes %}
+                                                        <h5 class="card-title"><input type="checkbox" id="usa" name=usa">
+                                                    {% else %}
+                                                        <h5 class="card-title">
+                                                        <input type="checkbox" name="usa" id="usa" checked>
+                                                    {% endif %}
+
+                                                    USA
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="../static/russia.jpg" class="card-img-top" alt="...">
+                                                <div class="card-body">
+
+                                                    {% if 'russia' not in themes %}
+                                                        <h5 class="card-title"><input type="checkbox" name="russia" id="russia">
+                                                    {% else %}
+                                                        <h5 class="card-title">
+                                                        <input type="checkbox" name="russia" id="russia" checked>
+                                                    {% endif %}
+
+                                                    Russia
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="../static/india.jpg" class="card-img-top" alt="...">
+                                                <div class="card-body">
+
+                                                    {% if 'india' not in themes %}
+                                                        <h5 class="card-title"><input type="checkbox" name="india" id="india">
+                                                    {% else %}
+                                                        <h5 class="card-title">
+                                                        <input type="checkbox" name="india" id="india" checked>
+                                                    {% endif %}
+
+                                                    India
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p>
+
+            <button class="btn btn-info btn-lg" type="submit">Edit</button>
+
+            </form>
+            <a class="btn btn-danger btn-lg" href="/" role="button">Cancel</a>
+
+
+        </div>
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
+    <script src="../static/js/script.js"></script>
+
+    <style>
+
+        .cards {
+            display: inline-block;
+        }
+
+    </style>
+
+{% endblock %}
