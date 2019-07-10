@@ -1,11 +1,11 @@
 function sport_func() {
-    var sport = document.getElementById("sport");
+    let sport = document.getElementById("sport");
 
-    var football = document.getElementById("football");
-    var basketball = document.getElementById("basketball");
-    var hockey = document.getElementById("hockey");
+    let football = document.getElementById("football");
+    let basketball = document.getElementById("basketball");
+    let hockey = document.getElementById("hockey");
 
-    if ( sport.checked == true ) {
+    if ( sport.checked === true ) {
         football.checked = 'on';
         basketball.checked = 'on';
         hockey.checked = 'on';
@@ -22,13 +22,13 @@ function sport_func() {
 
 
 function it_func() {
-    var it = document.getElementById("it");
+    let it = document.getElementById("it");
 
-    var java = document.getElementById("java");
-    var php = document.getElementById("php");
-    var cplus = document.getElementById("cplus");
+    let java = document.getElementById("java");
+    let php = document.getElementById("php");
+    let cplus = document.getElementById("cplus");
 
-    if (it.checked == true) {
+    if (it.checked === true) {
         java.checked = 'on';
         php.checked = 'on';
         cplus.checked = 'on';
@@ -45,13 +45,13 @@ function it_func() {
 
 
 function countries_func() {
-    var countries = document.getElementById("countries");
+    let countries = document.getElementById("countries");
 
-    var usa = document.getElementById("usa");
-    var russia = document.getElementById("russia");
-    var india = document.getElementById("india");
+    let usa = document.getElementById("usa");
+    let russia = document.getElementById("russia");
+    let india = document.getElementById("india");
 
-    if (countries.checked == true) {
+    if (countries.checked === true) {
         usa.checked = 'on';
         russia.checked = 'on';
         india.checked = 'on';
