@@ -1,4 +1,5 @@
 /* FontAwesome for working BootSnippet :> */
+/* Source - https://bootsnipp.com/snippets/X2Db0 */
 
 @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
@@ -28,11 +29,8 @@
 .mainflip {
     -webkit-transition: 1s;
     -webkit-transform-style: preserve-3d;
-    -ms-transition: 1s;
     -moz-transition: 1s;
     -moz-transform: perspective(1000px);
-    -moz-transform-style: preserve-3d;
-    -ms-transform-style: preserve-3d;
     transition: 1s;
     transform-style: preserve-3d;
     position: relative;
@@ -65,16 +63,11 @@
 .backside {
     -webkit-backface-visibility: hidden;
     -moz-backface-visibility: hidden;
-    -ms-backface-visibility: hidden;
     backface-visibility: hidden;
     -webkit-transition: 1s;
     -webkit-transform-style: preserve-3d;
     -moz-transition: 1s;
-    -moz-transform-style: preserve-3d;
     -o-transition: 1s;
-    -o-transform-style: preserve-3d;
-    -ms-transition: 1s;
-    -ms-transform-style: preserve-3d;
     transition: 1s;
     transform-style: preserve-3d;
 }
