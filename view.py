@@ -77,7 +77,6 @@ def index():
             passworduser = request.form['passwordform']
 
             s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-            token = s.dumps(emailuser, salt=app.config['SECURITY_PASSWORD_SALT'])
 
             session['nameuser'] = nameuser
             session['emailuser'] = emailuser
