@@ -14,7 +14,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
 MAIL_USE_SSL = True
-MAIL_USERNAME = 'alex20k.x@gmail.com'
-MAIL_PASSWORD = 'microlabM666'
+MAIL_USERNAME = 'x'
+MAIL_PASSWORD = 'x'
 
 del os
